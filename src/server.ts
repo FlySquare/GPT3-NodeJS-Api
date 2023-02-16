@@ -3,11 +3,13 @@ import bodyParser from "body-parser";
 import dotenv from 'dotenv';
 import {Api} from "./Services/api";
 dotenv.config();
-
+const cors = require('cors');
 const app: Express = express();
 const port = process.env.PORT;
-app.use(bodyParser.urlencoded({ extended: false }));
-
+app.use(bodyParser.json());
+app.use(cors({
+    origin: '*'
+}));
 app.post('/api/getAnswer', (req: Request, res: Response) => {
     if(typeof req.body.query === "undefined" || req.body.query === ""){
         Api.showResult(true, res, "No query");

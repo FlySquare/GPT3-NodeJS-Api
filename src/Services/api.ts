@@ -15,9 +15,11 @@ export class Api {
 
     public static showResult(error: boolean,res: Response, text: string): void {
         res.status(error ? 500 : 200).json({
-            status: error,
-            time: new Date().getTime(),
-            error: text
+            data:{
+                status: error,
+                time: new Date().getTime(),
+                content: text
+            }
         });
     }
 }

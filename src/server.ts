@@ -12,7 +12,7 @@ app.use(cors({
 }));
 app.post('/api/getAnswer', (req: Request, res: Response) => {
     if(typeof req.body.query === "undefined" || req.body.query === ""){
-        Api.showResult(true, res, "No query");
+        Api.showResult('null',0, res, ["null", 0]);
         return;
     }
     Api.getAnswer(req, res)

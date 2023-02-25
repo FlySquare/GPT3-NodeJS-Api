@@ -9,22 +9,25 @@ const openai = new OpenAIApi(configuration);
 export class Api {
     public static getAnswer(req: Request, res: Response): any {
         speakWithAI(req.body.query).then(r =>{
-            this.showResult(false, res, r)
+            this.showResult(req.body.query,1, res, r)
         });
     }
 
-    public static showResult(error: boolean,res: Response, text: string): void {
-        res.status(error ? 500 : 200).json({
+    public static showResult(askedQuery = '', status: number,res: Response, answerAndTime: any): void {
+        res.status(status === 0 ? 500 : 200).json({
             data:{
-                status: error,
-                time: new Date().getTime(),
-                content: text
+                status: status,
+                requestTime: answerAndTime[1],
+                askedQuery,
+                content: answerAndTime[0],
+                date: new Date().getTime(),
             }
         });
     }
 }
 
 async function speakWithAI(query: string){
+    const startTime = performance.now()
     const completion = await openai.createCompletion({
         model: "text-davinci-001",
         prompt: query,
@@ -34,5 +37,6 @@ async function speakWithAI(query: string){
         frequency_penalty: 0,
         presence_penalty: 0.6
     });
-    return completion.data.choices[0].text;
+    const endTime = performance.now()
+    return [completion.data.choices[0].text, endTime - startTime];
 }

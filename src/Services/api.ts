@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv'
+import * as fs from "fs";
 import {Request, Response} from "express";
 dotenv.config();
 const { Configuration, OpenAIApi } = require("openai");
@@ -26,7 +27,23 @@ export class Api {
     }
 }
 
-async function speakWithAI(query: string){
+
+function saveAnswerToJsonFile(question = '', answer = '', responseTime = 0) {
+    const filePath = 'logs/response.json';
+    let data = [];
+    if (fs.existsSync(filePath)) {
+        const fileContent = fs.readFileSync(filePath, 'utf-8');
+        data = JSON.parse(fileContent);
+    }
+    data[data.length] = {
+        "question": question,
+        "answer": answer,
+        "responseTime": responseTime
+    };
+    fs.writeFileSync(filePath, JSON.stringify(data));
+}
+
+async function speakWithAI(this: any, query: string){
     const startTime = performance.now()
     const completion = await openai.createCompletion({
         model: "text-davinci-001",
@@ -38,5 +55,6 @@ async function speakWithAI(query: string){
         presence_penalty: 0.6
     });
     const endTime = performance.now()
+    await saveAnswerToJsonFile(query, completion.data.choices[0].text, endTime - startTime);
     return [completion.data.choices[0].text, endTime - startTime];
 }

@@ -33,7 +33,7 @@ function saveAnswerToJsonFile(question = '', answer = '', responseTime = 0) {
     let data = [];
     if (fs.existsSync(filePath)) {
         const fileContent = fs.readFileSync(filePath, 'utf-8');
-        data = JSON.parse(fileContent);
+        data = JSON.parse(fileContent ? fileContent : '[]');
     }
     data[data.length] = {
         "question": question,

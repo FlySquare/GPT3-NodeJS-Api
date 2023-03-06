@@ -1,10 +1,11 @@
 import * as dotenv from 'dotenv'
 import * as fs from "fs";
 import {Request, Response} from "express";
+const { performance } = require('perf_hooks');
 dotenv.config();
 const { Configuration, OpenAIApi } = require("openai");
 const configuration = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: process.env.OPENAI_API_KEY || ''
 });
 const openai = new OpenAIApi(configuration);
 export class Api {
